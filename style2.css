@@ -18,13 +18,10 @@ body {
     padding: 20px;
 }
 
-h1 {
-
-}
-
 .jeux {
     display: flex;
     flex-flow: row wrap;
+    justify-content: center;
     gap: 20px;
 }
 
