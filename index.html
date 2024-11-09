@@ -1,35 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-          name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <title>Document</title>
-    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" rel="stylesheet">
-    <script crossorigin="anonymous"
-            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="assets/css/style2.css" rel="stylesheet">
-    <script defer src="assets/js/script.js"></script>
-    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-          referrerpolicy="no-referrer" rel="stylesheet"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sélection de Jeux</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
 
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .games-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            width: 250px;
+            margin: auto;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .game-image {
+            width: 100%;
+            height: 250px;
+            object-fit: center;
+            border-bottom: 4px solid #764ba2;
+        }
+
+        .game-title {
+            color: #333;
+            padding: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .game-title i {
+            color: #764ba2;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            .games-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1 class="display-2 fw-bold">Choisissez un jeu</h1>
-<div class="jeux">
-    <a href="actionVerite.html">
-        <img alt="" src="img/av.jpg">
-        <span>ACTION | VERITE</span>
-    </a>
-    <a href="bouleVoyance.html">
-        <img alt="" src="img/boule.webp">
-        <span>BOULE VOYANCE</span>
-    </a>
-</div>
+    <h1>Choisissez votre jeu</h1>
+    
+    <div class="games-container">
+        <a href="actionVerite.html" class="game-card">
+            <img src="img/av.jpg" alt="Action ou Vérité" class="game-image">
+            <div class="game-title">
+                <i class="fas fa-dice"></i>
+                Action ou Vérité
+            </div>
+        </a>
 
+        <a href="bouleVoyance.html" class="game-card">
+            <img src="img/boule.webp" alt="Boule de Voyance" class="game-image">
+            <div class="game-title">
+                <i class="fas fa-crystal-ball"></i>
+                Boule de Voyance
+            </div>
+        </a>
+
+        <a href="quiz/menu.html" class="game-card">
+            <img src="img/quiz.png" alt="Quiz Éducatif" class="game-image">
+            <div class="game-title">
+                <i class="fas fa-graduation-cap"></i>
+                Quiz Éducatif
+            </div>
+        </a>
+    </div>
 </body>
 </html>
