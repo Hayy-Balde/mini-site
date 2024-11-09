@@ -1,71 +1,211 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta content="ie=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Title</title>
-    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" rel="stylesheet">
-    <script crossorigin="anonymous"
-            defer integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <!--    <link rel="stylesheet" href="style3.css">-->
-    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-          referrerpolicy="no-referrer" rel="stylesheet"/>
-    <script defer src="actionVerite.js"></script>
-</head>
-<body class="container py-5">
-<span><a class="fs-3 text-info" href="index.html"><i class="fas fa-arrow-left"></i> retour a l'acceuil</a></span>
-<h1 class="display-4 fw-bold text-center pb-2">Action X Verite</h1>
+    <title>Action ou Vérité</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fa;
+            border: none;
+            font-weight: 500;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            padding: 12px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            box-shadow: none;
+            border-color: #80bdff;
+        }
+        
+        .game-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .gage {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            font-weight: 500;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .joueur-actuel {
+            background: linear-gradient(45deg, #ff6b6b, #ff8787);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
 
-<form action="" method="GET">
-    <span class="signal"></span>
-    <div class="form-group">
-        <div class="row ">
-            <div class="col-md-6 col-12">
-                <div class="input-group mb-3">
-                    <span class="input-group-text fs-3" id="basic-addon1">Joueur 1</span>
-                    <input aria-describedby="basic-addon1" aria-label="Username" class="form-control joueur1 fs-3" placeholder="pseudo 1"
-                           type="text">
+    <script defer src="assets/js/actionVerite.js"></script>
+</head>
+
+<body class="container py-5">
+    <div class="game-container">
+        <div class="d-flex align-items-center mb-4">
+            <a class="fs-3 text-decoration-none" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>
+                <span class="text-primary">Retour à l'accueil</span>
+            </a>
+        </div>
+
+        <h1 class="display-4 fw-bold text-center mb-5">Action ou Vérité</h1>
+
+        <div class="form-container">
+            <form id="gameForm">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text fs-4">
+                                <i class="fas fa-user me-2"></i>
+                            </span>
+                            <input class="form-control joueur1 fs-4" placeholder="Joueur 1" type="text">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text fs-4">
+                                <i class="fas fa-user me-2"></i>
+                            </span>
+                            <input class="form-control joueur2 fs-4" placeholder="Joueur 2" type="text">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-select niveau fs-4 mb-3">
+                            <option disabled selected>Choisir un niveau</option>
+                            <option value="couple">Couple</option>
+                            <option value="ami">Ami.e.s</option>
+                        </select>
+                        <button type="button" class="partie btn btn-primary fs-4 w-100">
+                            <i class="fas fa-play me-2"></i>Commencer
+                        </button>
+                    </div>
                 </div>
-                <div class="input-group mb-3">
-                    <span class="input-group-text  fs-3" id="basic-addon2">Joueur 2</span>
-                    <input aria-describedby="basic-addon2" aria-label="Username" class="form-control joueur2 fs-3" placeholder="pseudo 2"
-                           type="text">
-                </div>
+            </form>
+        </div>
+
+        <div class="game-section">
+            <div class="game-buttons">
+                <button class="btn btn-info fs-4 random" style="width: 180px;">
+                    <i class="fas fa-random me-2"></i>Random
+                </button>
+                <button class="btn btn-warning fs-4 rejouer" style="width: 180px;">
+                    <i class="fas fa-redo me-2"></i>Rejouer
+                </button>
             </div>
-            <div class="col-md-6 col-12">
-                <div class="row">
-                    <select aria-label="Default select example" class="form-select niveau fs-3">
-                        <option disabled selected>Selectionner un niveau</option>
-                        <option value="couple">Couple</option>
-                        <option value="ami">Ami.e</option>
-                    </select>
-                </div>
-                <div class="row p-3">
-                    <input class="partie btn btn-primary fs-3 w-100" value='commencer'>
-                </div>
+
+            <h2 class="display-5 fw-bold text-center mb-4">
+                Tour de <span class="joueur-actuel">...</span>
+            </h2>
+
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                <button class="btn btn-danger fs-4 action" style="width: 160px;">
+                    <i class="fas fa-running me-2"></i>Action
+                </button>
+                <button class="btn btn-success fs-4 verite" style="width: 160px;">
+                    <i class="fas fa-comment me-2"></i>Vérité
+                </button>
+            </div>
+
+            <div class="gage fs-2 text-center">
+                En attente du choix...
             </div>
         </div>
     </div>
-</form>
 
-<main class="py-5 text-center">
-    <div class="d-flex justify-content-around w-100">
-        <button class="btn btn-info fs-3 random"  style="width: 200px;">Random</button>
-        <button class="btn btn-warning fs-3 rejouer" style="width: 200px;">Rejouer</button>
-    </div>
-    <h2 class=" display-5 fw-bold">C'est le tour de <span class="joueur-actuel text-danger">moi</span></h2>
-    <div class="bouton-choix ">
-        <button class="btn btn-danger fs-3 w-25 action">Action</button>
-        <button class="btn btn-success fs-3 w-25 verite">Verite</button>
-    </div>
-    <div class="py-4">
-        <p class="fs-1 w-75 mx-auto gage">Ici votre gage</p>
-    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animation des éléments au chargement
+            const elements = document.querySelectorAll('.form-container, .game-section');
+            elements.forEach(el => el.classList.add('fade-in'));
 
-</main>
+            // Gestion des boutons
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    button.style.transform = 'translateY(-2px)';
+                });
+                button.addEventListener('mouseleave', () => {
+                    button.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Ajout de la validation du formulaire
+            const gameForm = document.getElementById('gameForm');
+            const joueur1Input = document.querySelector('.joueur1');
+            const joueur2Input = document.querySelector('.joueur2');
+            const niveauSelect = document.querySelector('.niveau');
+            const partieBtn = document.querySelector('.partie');
+
+            function validateForm() {
+                const isValid = joueur1Input.value && joueur2Input.value && niveauSelect.value;
+                partieBtn.disabled = !isValid;
+                return isValid;
+            }
+
+            [joueur1Input, joueur2Input, niveauSelect].forEach(el => {
+                el.addEventListener('input', validateForm);
+            });
+
+            // Désactiver le bouton commencer par défaut
+            partieBtn.disabled = true;
+        });
+    </script>
 </body>
 </html>

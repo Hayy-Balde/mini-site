@@ -1,37 +1,302 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-          name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <title>Document</title>
-    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" rel="stylesheet">
-    <script crossorigin="anonymous"
-            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="style.css" rel="stylesheet">
-    <script defer src="bouleVoyance.js"></script>
-    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-          referrerpolicy="no-referrer" rel="stylesheet"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Boule de Voyance</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet"/>
+    
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #8e44ad;
+            --text-color: #2c3e50;
+            --bg-color: #f0f2f5;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-color) 0%, #ffffff 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-color);
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+
+        main {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h2 {
+            /* ... previous code remains the same ... */
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        .crystal-ball-container {
+            position: relative;
+            cursor: pointer;
+            margin: 2rem auto;
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .crystal-ball-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .crystal-ball-container:hover img {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .crystal-ball-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .instruction-text {
+            font-size: 1.2rem;
+            color: #666;
+            margin: 2rem auto;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .prediction-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 90%;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .prediction-modal.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .btn-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .btn-close:hover {
+            color: var(--accent-color);
+        }
+
+        .resultat {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .loader.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .load {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #fff;
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+            margin-bottom: 1rem;
+        }
+
+        .loader span {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 900;
+        }
+
+        .overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 2.5rem;
+            }
+
+            .crystal-ball-container {
+                max-width: 250px;
+            }
+
+            .instruction-text {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+        }
+    </style>
+    
+    <script defer src="assets/js/bouleVoyance.js"></script>
 </head>
 <body>
-<span><a class="fs-3 text-start text-info" href="index.html"><i
-        class="fas fa-arrow-left"></i> retour a l'acceuil</a></span>
-<main>
-    <h2>Boule Voyance</h2>
-    <img alt="" src="img/boule.jpg" title="click moi">
-    <p>Touchez la boule de voyance pour decouvrir ce qui se cache dans votre vie</p>
-    <div class="texte visible">
-        <span class="btn-close btn btn-danger"></span>
-        <span class="resultat">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias corporis dolor dolore eius, exercitationem facilis impedit quidem temporibus. Aliquid eaque eum expedita fuga hic inventore labore quas qui veniam vero!</span>
+    <a class="back-link text-decoration-none" href="index.html">
+        <span class="btn btn-primary">
+            <i class="fas fa-arrow-left me-2"></i>Retour à l'accueil
+        </span>
+    </a>
+
+    <main>
+        <h2>Boule de Voyance</h2>
+        
+        <div class="crystal-ball-container">
+            <img alt="Boule de cristal" src="img/boule.webp" title="Cliquez pour découvrir votre avenir">
+        </div>
+        
+        <p class="instruction-text">
+            <i class="fas fa-magic me-2"></i>
+            Touchez la boule de cristal pour découvrir les mystères qui se cachent dans votre destinée...
+        </p>
+    </main>
+
+    <div class="prediction-modal">
+        <button class="btn-close" aria-label="Fermer">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="resultat py-3"></div>
     </div>
-    <div class="loader visible">
+
+    <div class="loader">
         <div class="load"></div>
-        <span>Veuillez patienter ...</span>
+        <span>Les astres vous lisent...</span>
     </div>
-</main>
+
+    <div class="overlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const crystalBall = document.querySelector('.crystal-ball-container');
+            const modal = document.querySelector('.prediction-modal');
+            const loader = document.querySelector('.loader');
+            const overlay = document.querySelector('.overlay');
+            const closeBtn = document.querySelector('.btn-close');
+            const resultat = document.querySelector('.resultat');
+
+            // Animation au survol de la boule
+            crystalBall.addEventListener('mouseover', () => {
+                crystalBall.style.transform = 'translateY(-10px)';
+            });
+
+            crystalBall.addEventListener('mouseout', () => {
+                crystalBall.style.transform = 'translateY(0)';
+            });
+
+            // Clic sur la boule
+            crystalBall.addEventListener('click', () => {
+                loader.classList.add('visible');
+                
+                // Simulation du temps de chargement
+                setTimeout(() => {
+                    loader.classList.remove('visible');
+                    modal.classList.add('visible');
+                    overlay.classList.add('visible');
+                    
+                    // Animation du texte de prédiction
+                    resultat.style.opacity = '0';
+                    resultat.textContent = textVoyance[rand(textVoyance)]; // À remplacer par votre logique de prédiction
+                    setTimeout(() => {
+                        resultat.style.opacity = '1';
+                    }, 100);
+                }, 2000);
+            });
+
+            // Fermeture du modal
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('visible');
+                overlay.classList.remove('visible');
+            });
+
+            overlay.addEventListener('click', () => {
+                modal.classList.remove('visible');
+                overlay.classList.remove('visible');
+            });
+        });
+    </script>
 </body>
 </html>

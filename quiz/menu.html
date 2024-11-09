@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Multi-thèmes</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .theme-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .option-btn {
+            transition: all 0.3s ease;
+        }
+        .option-btn:hover {
+            transform: translateX(10px);
+        }
+        .correct {
+            background-color: #198754 !important;
+            color: white !important;
+        }
+        .incorrect {
+            background-color: #dc3545 !important;
+            color: white !important;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <!-- Themes Section -->
+        <div id="themesSection" class="quiz-container">
+            <h1 class="text-center mb-5">Choisissez votre thème</h1>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="theme-card card h-100" data-theme="culture">
+                        <div class="card-body text-center">
+                            <i class="fas fa-globe fa-3x mb-3 text-primary"></i>
+                            <h3 class="card-title">Culture Générale</h3>
+                            <p class="card-text text-muted">Histoire, géographie et actualités</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="theme-card card h-100" data-theme="science">
+                        <div class="card-body text-center">
+                            <i class="fas fa-flask fa-3x mb-3 text-success"></i>
+                            <h3 class="card-title">Sciences</h3>
+                            <p class="card-text text-muted">Physique, chimie et biologie</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="theme-card card h-100" data-theme="sport">
+                        <div class="card-body text-center">
+                            <i class="fas fa-futbol fa-3x mb-3 text-danger"></i>
+                            <h3 class="card-title">Sport</h3>
+                            <p class="card-text text-muted">Records, champions et compétitions</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="theme-card card h-100" data-theme="cinema">
+                        <div class="card-body text-center">
+                            <i class="fas fa-film fa-3x mb-3 text-warning"></i>
+                            <h3 class="card-title">Cinéma</h3>
+                            <p class="card-text text-muted">Films, acteurs et réalisateurs</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mx-auto">
+                    <div class="theme-card card h-100" data-theme="musique">
+                        <div class="card-body text-center">
+                            <i class="fas fa-music fa-3x mb-3 text-info"></i>
+                            <h3 class="card-title">Musique</h3>
+                            <p class="card-text text-muted">Artistes, albums et genres</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quizSection" class="quiz-container d-none">
+            <button class="back-btn btn btn-outline-primary mb-3" id="backToThemes">
+                <i class="fas fa-arrow-left"></i> Retour aux thèmes
+            </button>
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="text-center mb-0" id="quizTitle">Quiz</h1>
+                </div>
+                
+                <div class="card-body">
+                    <div id="questionSection">
+                        <div class="progress mb-4">
+                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        
+                        <h5 class="text-secondary mb-2">Question <span id="currentQuestionNum">1</span>/<span id="totalQuestions">5</span></h5>
+                        <h4 id="question" class="mb-4"></h4>
+                        
+                        <div id="options" class="d-grid gap-3">
+                            <!-- Options will be inserted here -->
+                        </div>
+                    </div>
+
+                    <div id="resultsSection" class="text-center d-none">
+                        <h2 class="mb-4">Quiz Terminé!</h2>
+                        <div class="display-4 mb-4">Score: <span id="score">0</span>/<span id="totalScore">0</span></div>
+                        <button id="restartBtn" class="btn btn-primary btn-lg me-2">Recommencer</button>
+                        <button id="changeThemeBtn" class="btn btn-outline-primary btn-lg">Changer de thème</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const quizzesByTheme = {
+                culture: {
+                    title: "Quiz Culture Générale",
+                    questions: [
+                        {
+                            question: "Quelle est la capitale du Japon ?",
+                            options: ["Pékin", "Séoul", "Tokyo", "Bangkok"],
+                            correct: 2
+                        },
+                        {
+                            question: "Qui a peint la Joconde ?",
+                            options: ["Van Gogh", "Michel-Ange", "Léonard de Vinci", "Picasso"],
+                            correct: 2
+                        },
+                        {
+                            question: "En quelle année a débuté la Première Guerre mondiale ?",
+                            options: ["1914", "1916", "1918", "1920"],
+                            correct: 0
+                        },
+                        {
+                            question: "Quel est le plus grand océan du monde ?",
+                            options: ["Atlantique", "Indien", "Pacifique", "Arctique"],
+                            correct: 2
+                        },
+                        {
+                            question: "Qui était le premier président des États-Unis ?",
+                            options: ["Thomas Jefferson", "George Washington", "Abraham Lincoln", "Benjamin Franklin"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel est le plus grand désert chaud du monde ?",
+                            options: ["Sahara", "Gobi", "Kalahari", "Atacama"],
+                            correct: 0
+                        },
+                        {
+                            question: "Dans quelle ville se trouve la Tour Eiffel ?",
+                            options: ["Londres", "Paris", "Berlin", "Rome"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel est le plus long fleuve du monde ?",
+                            options: ["Amazone", "Nil", "Mississippi", "Yangtsé"],
+                            correct: 1
+                        },
+                        {
+                            question: "Qui a écrit 'Roméo et Juliette' ?",
+                            options: ["Victor Hugo", "William Shakespeare", "Molière", "Charles Dickens"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est la plus grande planète du système solaire ?",
+                            options: ["Mars", "Saturne", "Jupiter", "Neptune"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quel pays a remporté le plus de Coupes du Monde de football ?",
+                            options: ["Allemagne", "Argentine", "France", "Brésil"],
+                            correct: 3
+                        },
+                        {
+                            question: "Qui est l'auteur des 'Misérables' ?",
+                            options: ["Victor Hugo", "Émile Zola", "Gustave Flaubert", "Albert Camus"],
+                            correct: 0
+                        },
+                        {
+                            question: "Quelle est la capitale de l'Australie ?",
+                            options: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
+                            correct: 2
+                        },
+                        {
+                            question: "En quelle année l'homme a-t-il marché sur la Lune pour la première fois ?",
+                            options: ["1965", "1967", "1969", "1971"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quel est le plus petit pays du monde ?",
+                            options: ["Monaco", "Vatican", "Saint-Marin", "Liechtenstein"],
+                            correct: 1
+                        },
+                        {
+                            question: "Qui a inventé la théorie de la relativité ?",
+                            options: ["Isaac Newton", "Albert Einstein", "Stephen Hawking", "Marie Curie"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est la capitale de l'Égypte ?",
+                            options: ["Le Caire", "Alexandrie", "Louxor", "Assouan"],
+                            correct: 0
+                        },
+                        {
+                            question: "Quel est le symbole chimique de l'or ?",
+                            options: ["Ag", "Fe", "Au", "Cu"],
+                            correct: 2
+                        },
+                        {
+                            question: "Qui a peint 'La Nuit étoilée' ?",
+                            options: ["Claude Monet", "Vincent van Gogh", "Pablo Picasso", "Salvador Dalí"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est la langue la plus parlée au monde ?",
+                            options: ["Anglais", "Espagnol", "Mandarin", "Hindi"],
+                            correct: 2
+                        }
+                    ]
+                },
+                science: {
+                    title: "Quiz Sciences",
+                    questions: [
+                        {
+                            question: "Quelle est la formule chimique de l'eau ?",
+                            options: ["CO2", "H2O", "O2", "N2"],
+                            correct: 1
+                        },
+                        {
+                            question: "Combien de planètes y a-t-il dans notre système solaire ?",
+                            options: ["7", "8", "9", "10"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel est l'organe le plus grand du corps humain ?",
+                            options: ["Le foie", "La peau", "Les poumons", "L'intestin"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est l'unité de mesure de la force électrique ?",
+                            options: ["Watt", "Ampère", "Volt", "Ohm"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quel est le symbole chimique du fer ?",
+                            options: ["Fr", "Fe", "Fi", "Fer"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est la vitesse de la lumière ?",
+                            options: ["299 792 km/s", "199 792 km/s", "399 792 km/s", "499 792 km/s"],
+                            correct: 0
+                        },
+                        {
+                            question: "Quel est l'os le plus long du corps humain ?",
+                            options: ["L'humérus", "Le tibia", "Le fémur", "Le péroné"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quel est le gaz le plus abondant dans l'atmosphère terrestre ?",
+                            options: ["Oxygène", "Azote", "Dioxyde de carbone", "Hydrogène"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est la plus petite particule d'un élément ?",
+                            options: ["Molécule", "Atome", "Électron", "Proton"],
+                            correct: 1
+                        },
+                        {
+                            question: "Dans quelle unité mesure-t-on la température en science ?",
+                            options: ["Celsius", "Fahrenheit", "Kelvin", "Rankine"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quel est le plus grand mammifère terrestre ?",
+                            options: ["Girafe", "Rhinocéros", "Hippopotame", "Éléphant d'Afrique"],
+                            correct: 3
+                        },
+                        {
+                            question: "Combien de chromosomes possède l'être humain ?",
+                            options: ["23", "46", "48", "50"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est la planète la plus chaude du système solaire ?",
+                            options: ["Mars", "Mercure", "Vénus", "Jupiter"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quel est le métal le plus conducteur d'électricité ?",
+                            options: ["Or", "Cuivre", "Argent", "Aluminium"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quelle est la durée de rotation de la Terre autour du Soleil ?",
+                            options: ["365 jours", "364 jours", "366 jours", "363 jours"],
+                            correct: 0
+                        },
+                        {
+                            question: "Quel est l'élément le plus abondant dans l'Univers ?",
+                            options: ["Hélium", "Oxygène", "Hydrogène", "Carbone"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quelle est la plus petite unité de mesure du vivant ?",
+                            options: ["La cellule", "La molécule", "L'atome", "Le gène"],
+                            correct: 0
+                        },
+                        {
+                            question: "Quelle est la force qui maintient les planètes en orbite ?",
+                            options: ["Magnétisme", "Gravitation", "Électricité", "Force nucléaire"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel est le nom de la galaxie qui contient notre système solaire ?",
+                            options: ["Andromède", "Voie lactée", "Triangle", "Grande Ourse"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel est le pH de l'eau pure ?",
+                            options: ["5", "6", "7", "8"],
+                            correct: 2
+                        }
+                    ]
+                },
+                sport: {
+                    title: "Quiz Sport",
+                    questions: [
+                        {
+                            question: "Combien de joueurs composent une équipe de football sur le terrain ?",
+                            options: ["9", "10", "11", "12"],
+                            correct: 2
+                        },
+                        {
+                            question: "Dans quel sport utilise-t-on un arc ?",
+                            options: ["Escrime", "Tir à l'arc", "Javelot", "Lancer de disque"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est la durée d'un match de rugby ?",
+                            options: ["60 minutes", "70 minutes", "80 minutes", "90 minutes"],
+                            correct: 2
+                        },
+                        {
+                            question: "En quelle année ont eu lieu les premiers Jeux Olympiques modernes ?",
+                            options: ["1886", "1896", "1906", "1916"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel pays a inventé le judo ?",
+                            options: ["Chine", "Corée", "Japon", "Vietnam"],
+                            correct: 2
+                        },
+                        {
+                            question: "Combien de temps dure un round de boxe professionnelle ?",
+                            options: ["2 minutes", "3 minutes", "4 minutes", "5 minutes"],
+                            correct: 1
+                        },
+                        {
+                            question: "Dans quel sport peut-on faire un 'ace' ?",
+                            options: ["Football", "Tennis", "Basketball", "Volleyball"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est la longueur d'une piscine olympique ?",
+                            options: ["25 mètres", "50 mètres", "75 mètres", "100 mètres"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel est le seul sport pratiqué sur la Lune ?",
+                            options: ["Golf", "Tennis", "Football", "Baseball"],
+                            correct: 0
+                        },
+                        {
+                            question: "Dans quel sport utilise-t-on une raquette et un volant ?",
+                            options: ["Tennis", "Squash", "Badminton", "Ping-pong"],
+                            correct: 2
+                        },
+                        {
+                            question: "Combien de points vaut un essai au rugby ?",
+                            options: ["3 points", "4 points", "5 points", "6 points"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quelle équipe de NBA détient le record de victoires en saison régulière ?",
+                            options: ["Chicago Bulls", "Golden State Warriors", "Los Angeles Lakers", "Boston Celtics"],
+                            correct: 1
+                        },
+                        {
+                            question: "En athlétisme, quelle est la distance d'un tour de piste ?",
+                            options: ["200m", "300m", "400m", "500m"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quel est le nom du trophée remis au vainqueur de la Coupe du Monde de football ?",
+                            options: ["Coupe Jules Rimet", "Trophée FIFA", "Coupe d'Or", "Trophée du Monde"],
+                            correct: 1
+                        },
+                        {
+                            question: "Dans quel sport utilise-t-on un masque et un fleuret ?",
+                            options: ["Boxe", "Escrime", "Kendo", "Judo"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est la durée d'un match de basketball NBA ?",
+                            options: ["36 minutes", "40 minutes", "44 minutes", "48 minutes"],
+                            correct: 3
+                        },
+                        {
+                            question: "Quel est le diamètre d'un panier de basketball ?",
+                            options: ["45 cm", "50 cm", "55 cm", "60 cm"],
+                            correct: 0
+                        },
+                        {
+                            question: "Dans quel sport peut-on faire un 'strike' ?",
+                            options: ["Golf", "Bowling", "Cricket", "Baseball"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quelle est la durée d'un match de hockey sur glace ?",
+                            options: ["45 minutes", "50 minutes", "55 minutes", "60 minutes"],
+                            correct: 3
+                        },
+                        {
+                            question: "En F1, que signifie le drapeau à damiers ?",
+                            options: ["Accident", "Disqualification", "Arrivée", "Départ"],
+                            correct: 2
+                        }
+                    ]
+                },
+    
+                cinema: {
+                    title: "Quiz Cinéma",
+                    questions: [
+                        {
+                            question: "Qui a réalisé le film 'Inception' ?",
+                            options: ["Steven Spielberg", "Christopher Nolan", "Martin Scorsese", "Quentin Tarantino"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel acteur joue Jack dans 'Titanic' ?",
+                            options: ["Brad Pitt", "Leonardo DiCaprio", "Tom Cruise", "Johnny Depp"],
+                            correct: 1
+                        },
+                        {
+                            question: "En quelle année est sorti le premier Star Wars ?",
+                            options: ["1975", "1976", "1977", "1978"],
+                            correct: 2
+                        },
+                        {
+                            question: "Qui joue Iron Man dans l'univers Marvel ?",
+                            options: ["Chris Evans", "Chris Hemsworth", "Robert Downey Jr.", "Mark Ruffalo"],
+                            correct: 2
+                        },
+                        {
+                            question: "Quel film a remporté l'Oscar du meilleur film en 2020 ?",
+                            options: ["1917", "Parasite", "Joker", "Once Upon a Time in Hollywood"],
+                            correct: 1
+                        },
+                        {
+                            question: "Qui a réalisé 'Pulp Fiction' ?",
+                            options: ["Martin Scorsese", "Quentin Tarantino", "Steven Spielberg", "Francis Ford Coppola"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel est le film le plus rentable de tous les temps ?",
+                            options: ["Avatar", "Avengers: Endgame", "Titanic", "Star Wars: Le Réveil de la Force"],
+                            correct: 0
+                        },
+                        {
+                            question: "Qui joue le rôle principal dans 'Matrix' ?",
+                            options: ["Brad Pitt", "Keanu Reeves", "Tom Cruise", "Will Smith"],
+                            correct: 1
+                        },
+                        {
+                            question: "Qui a réalisé Titanic ?",
+                            options: ["Steven Spielberg", "James Cameron", "Martin Scorsese", "Christopher Nolan"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel acteur joue Iron Man dans l'univers Marvel ?",
+                            options: ["Chris Evans", "Chris Hemsworth", "Robert Downey Jr.", "Mark Ruffalo"],
+                            correct: 2
+                        }
+                    ]
+                },
+                musique: {
+                    title: "Quiz Musique",
+                    questions: [
+                        {
+                            question: "Quel groupe a chanté 'Bohemian Rhapsody' ?",
+                            options: ["The Beatles", "Queen", "Led Zeppelin", "Pink Floyd"],
+                            correct: 1
+                        },
+                        {
+                            question: "Quel est l'instrument principal d'un pianiste ?",
+                            options: ["Piano", "Guitare", "Violon", "Batterie"],
+                            correct: 0
+                        }
+                    ]
+                }
+            };
+
+            let currentTheme = null;
+            let currentQuestion = 0;
+            let score = 0;
+            let isAnswering = false;
+
+            function startQuiz(theme) {
+                currentTheme = theme;
+                currentQuestion = 0;
+                score = 0;
+                $('#themesSection').addClass('d-none');
+                $('#quizSection').removeClass('d-none');
+                $('#quizTitle').text(quizzesByTheme[theme].title);
+                $('#questionSection').removeClass('d-none');
+                $('#resultsSection').addClass('d-none');
+                displayQuestion();
+            }
+
+            function updateProgressBar() {
+                const progress = ((currentQuestion + 1) / quizzesByTheme[currentTheme].questions.length) * 100;
+                $('.progress-bar').css('width', progress + '%');
+            }
+
+            
+
+            // function displayQuestion() {
+            //     const q = quizzesByTheme[currentTheme].questions[currentQuestion];
+            //     $('#currentQuestionNum').text(currentQuestion + 1);
+            //     $('#totalQuestions').text(quizzesByTheme[currentTheme].questions.length);
+            //     $('#question').text(q.question);
+                
+            //     // Créez un tableau d'options avec leurs index d'origine
+            //     const optionsWithIndex = q.options.map((option, index) => ({ option, index }));
+                
+            //     // Mélangez les options sans changer leur index d'origine
+            //     for (let i = optionsWithIndex.length - 1; i > 0; i--) {
+            //         const j = Math.floor(Math.random() * (i + 1));
+            //         [optionsWithIndex[i], optionsWithIndex[j]] = [optionsWithIndex[j], optionsWithIndex[i]];
+            //     }
+
+            //     // Générer le HTML des options avec leurs index d'origine
+            //     const optionsHtml = optionsWithIndex.map(({ option, index }) => `
+            //         <button class="option-btn btn btn-outline-primary btn-lg text-start" data-index="${index}">
+            //             ${option}
+            //         </button>
+            //     `).join('');
+                
+            //     $('#options').html(optionsHtml);
+            //     updateProgressBar();
+            // }
+
+
+            function displayQuestion() {
+                const q = quizzesByTheme[currentTheme].questions[currentQuestion];
+                $('#currentQuestionNum').text(currentQuestion + 1);
+                $('#totalQuestions').text(quizzesByTheme[currentTheme].questions.length);
+                $('#question').text(q.question);
+                
+                const optionsHtml = q.options.map((option, index) => `
+                    <button class="option-btn btn btn-outline-primary btn-lg text-start" data-index="${index}">
+                        ${option}
+                    </button>
+                `).join('');
+                
+                $('#options').html(optionsHtml);
+                updateProgressBar();
+            }
+
+            function showResults() {
+                $('#questionSection').addClass('d-none');
+                $('#resultsSection').removeClass('d-none');
+                $('#score').text(score);
+                $('#totalScore').text(quizzesByTheme[currentTheme].questions.length);
+            }
+
+            // Event Handlers
+            $('.theme-card').click(function() {
+                const theme = $(this).data('theme');
+                startQuiz(theme);
+            });
+
+            $(document).on('click', '.option-btn', function() {
+                if (isAnswering) return;
+                isAnswering = true;
+
+                const selectedIndex = $(this).data('index');
+                const correctIndex = quizzesByTheme[currentTheme].questions[currentQuestion].correct;
+
+                if (selectedIndex === correctIndex) {
+                    $(this).addClass('correct');
+                    score++;
+                } else {
+                    $(this).addClass('incorrect');
+                    $('.option-btn').eq(correctIndex).addClass('correct');
+                }
+
+                setTimeout(() => {
+                    currentQuestion++;
+                    isAnswering = false;
+
+                    if (currentQuestion < quizzesByTheme[currentTheme].questions.length) {
+                        displayQuestion();
+                    } else {
+                        showResults();
+                    }
+                }, 1000);
+            });
+
+            $('#restartBtn').click(function() {
+                startQuiz(currentTheme);
+            });
+
+            $('#changeThemeBtn, #backToThemes').click(function() {
+                $('#quizSection').addClass('d-none');
+                $('#themesSection').removeClass('d-none');
+            });
+        });
+    </script>
+</body>
+</html>
